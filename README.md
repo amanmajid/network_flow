@@ -1,2 +1,5 @@
 # pyWATH
- Water model for NIC study
+Water model for NIC study
+
+## Requirements:
+- Python3
