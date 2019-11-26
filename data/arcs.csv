@@ -1,0 +1,14 @@
+﻿Start,End,Cost,LowerBound,UpperBound
+Source1,Reservoir1,0,5,500
+Source2,Reservoir1,0,5,500
+Source2,Reservoir2,0,5,500
+Reservoir1,Demand2,0,5,500
+Reservoir1,Demand1,0,5,500
+Reservoir2,Demand3,0,5,500
+Source1,Reservoir2,0,5,500
+Source1,DummyDemand,100,0,500
+Source2,DummyDemand,100,0,500
+DummySupply,Demand1,100,0,500
+DummySupply,Demand2,100,0,500
+DummySupply,Demand3,100,0,500
+DummySupply,DummyDemand,0,0,500
