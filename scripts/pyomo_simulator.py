@@ -25,11 +25,14 @@ import pyomo.environ as pe
 
 class waterSimulator():
 
-    def __init__(self, node_file='../data/nodes.csv', arc_file='../data/arcs.csv', supply_data_file='../data/water_supply.csv', demand_data_file='../data/water_demand.csv'):
+    def __init__(self, timestep=0, node_file='../data/nodes.csv', arc_file='../data/arcs.csv', supply_data_file='../data/water_supply.csv', demand_data_file='../data/water_demand.csv'):
         
         '''
          init
         '''
+        
+        # define timestep
+        self.timestep = timestep
         
         # Read in the node_data
         self.node_data = pd.read_csv(node_file)
@@ -123,7 +126,7 @@ class waterSimulator():
             init = {}
             for node in model.nodes:
                 if(node in demand_data.columns):
-                    init[node] = demand_data[node].iloc[0]
+                    init[node] = demand_data[node].iloc[self.timestep]
                 else:
                     init[node] = 0
             return init
@@ -135,7 +138,7 @@ class waterSimulator():
             init = {}
             for node in model.nodes:
                 if(node in supply_data.columns):
-                    init[node] = supply_data[node].iloc[0]
+                    init[node] = supply_data[node].iloc[self.timestep]
                 else:
                     init[node] = 0
             return init
@@ -197,7 +200,7 @@ class waterSimulator():
         
         solver = pyomo.opt.SolverFactory(solver)
 
-        print('-----Solving Pyomo Model-----')
+        #print('-----Solving Pyomo Model-----')
         self.results = solver.solve(self.model)
 
         # Check that we actually computed an optimal solution, load results
@@ -210,38 +213,56 @@ class waterSimulator():
 
 
     def pyomo_model_print_solutions(self):
-        print(self.results.write_yaml())
-        print('# ----------------------------------------------------------')
-        print('#   Arc Flows')
-        print('# ----------------------------------------------------------')
-        print('')
-        print('State of water supply: ' + self.SupplyState[0])
-        print('')
+        #print(self.results.write_yaml())
+        #print('# ----------------------------------------------------------')
+        #print('#   Arc Flows')
+        #print('# ----------------------------------------------------------')
+        #print('')
+        #print('State of water supply: ' + self.SupplyState[0])
+        #print('')
                
         startNodes  = []
         endNodes    = []
         flowValues  = []
-        flowValues  = []
+        timestep    = []
         
         for startNode,endNode in self.arc_set:
             flow = self.model.flow[(startNode,endNode)].value
-            print('Flow on arc %s -> %s: %.2f'%(str(startNode), str(endNode), flow))
+            #print('Flow on arc %s -> %s: %.2f'%(str(startNode), str(endNode), flow))
             
             startNodes.append(startNode)
             endNodes.append(endNode)
             flowValues.append(flow)
+            timestep.append(self.timestep + 1)
 
             
-        self.flowResults = pd.DataFrame({'start' : startNodes,
-                                         'end' : endNodes,
-                                         'flow' : flowValues})
+        self.flowResults = pd.DataFrame({'time'     : timestep,
+                                         'start'    : startNodes,
+                                         'end'      : endNodes,
+                                         'flow'     : flowValues})
         
 
 # --------------------------
 # RUN MODEL
 # --------------------------
 
-m = waterSimulator()
-m.pyomo_model_create()
-m.pyomo_model_solve()
-m.pyomo_model_print_solutions()
+print('# ----------------------------------------------------------')
+print('# Running... ')
+results = pd.DataFrame()
+for timestep in range(0,15):
+    print('> Solving time: ' + str(timestep+1))
+    m = waterSimulator(timestep)
+    m.pyomo_model_create()
+    m.pyomo_model_solve()
+    m.pyomo_model_print_solutions()
+    results = results.append(m.flowResults, ignore_index=True)
+
+print('> Done!')
+print('')
+print('# Saving output...')
+
+results.to_csv('../outputs/simulationResults.csv', index=False)
+print('> Done!')
+print('> results saved as ../outputs/simulationResults.csv')
+      
+print('# ----------------------------------------------------------')
