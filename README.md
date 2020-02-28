@@ -1,10 +1,5 @@
-# pyWATH
-Network flow optimisation of a water supply system. Requites Python3 with NumPy/Pandas/Pyomo (all available in the Anaconda Distribution) and the Gurobi solver (freely available to academics).
+# pyWath
+A simple network flow optimisation in Python using the Pyomo optimisation library. Requires standard scientific libraries such as numpy and pandas (all available in the Anaconda Distribution). The Pyomo package is installed with the default GLPK solver. However, the Gurobi solver is recommended, which is freely available to academics. 
 
-Installation of the Pyomo package is here: http://www.pyomo.org/ 
-
-Installation of the Gurobi solver is here: https://www.gurobi.com/
-
-## To Do:
-- Add reservoir behaviour: https://stackoverflow.com/questions/56560432/how-to-model-flow-balance-equation-in-pyomo
-- 
+- Installation of the Pyomo package is here: http://www.pyomo.org/ 
+- Installation of the Gurobi solver is here: https://www.gurobi.com/
