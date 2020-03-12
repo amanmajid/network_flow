@@ -1,9 +1,9 @@
 """
 
-    pyomo_simulator.py
+    netFlow.py
     
     Description:
-        A network simulation model implemented in Pyomo.
+        A network simulation model implemented using Pyomo.
     
     25/11/2019
     Author: Aman Majid
@@ -23,7 +23,7 @@ import pyomo.environ as pe
 # Define model class
 # --------------------------
 
-class waterSimulator():
+class netFlow():
 
     def __init__(self, timestep=0, node_file='../data/nodes.csv', arc_file='../data/arcs.csv', supply_data_file='../data/water_supply.csv', demand_data_file='../data/water_demand.csv'):
         
@@ -251,7 +251,7 @@ print('# Running... ')
 results = pd.DataFrame()
 for timestep in range(0,15):
     print('> Solving time: ' + str(timestep+1))
-    m = waterSimulator(timestep)
+    m = netFlow(timestep)
     m.pyomo_model_create()
     m.pyomo_model_solve()
     m.pyomo_model_print_solutions()
